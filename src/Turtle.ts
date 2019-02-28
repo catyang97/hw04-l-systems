@@ -23,8 +23,10 @@ export default class Turtle {
     }
 
     moveForward(distance: number) {
-        let dist4: vec3 = vec3.fromValues(distance, distance, distance);
+        let dist3: vec3 = vec3.fromValues(distance, distance, distance);
+        let forw: vec3 = vec3.fromValues(this.forward[0], this.forward[1], this.forward[2]);
         let trans: vec3 = vec3.create();
+        trans = vec3.multiply(trans, forw, dist3);
         vec3.add(this.position, this.position, trans);
     }
 

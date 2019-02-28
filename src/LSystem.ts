@@ -28,19 +28,21 @@ export default class LSystem {
         this.grammar = axiom;
         this.turtleStack = [];
         this.setExpansionRules();
+        this.setDrawRules();
         this.iterations = iterations;
-        this.expandGrammar();
+        // this.expandGrammar();
         console.log(this.grammar);
     }
 
     setExpansionRules() {
         let expansions: Map<string, number> = new Map();
-        expansions.set("ABAB[b]", 0.5);
-        expansions.set("ABAB[c]", 0.5);
+        // expansions.set("A[aAbB][cAB]A", 0.5);
+        // expansions.set("A[cAdAeA]A", 0.5);
+        expansions.set("A[Aa]", 1.0);
         this.expRules.set("A", new ExpansionRule("A", expansions));
 
         let expansions2: Map<string, number> = new Map();
-        expansions2.set("BB[a]AB]", 1.0);
+        expansions2.set("A", 1.0);
         this.expRules.set("B", new ExpansionRule("B", expansions2));
 
         let expansionsSave: Map<string, number> = new Map();
@@ -96,7 +98,7 @@ export default class LSystem {
         console.log(this.turtle);
         // console.log(this.grammar);
         this.transforms.push(this.turtle.getTransformMatrix());
-        this.turtle.moveForward(1.5);
+        this.turtle.moveForward(1.0);
     }
 
     save() {
@@ -178,7 +180,7 @@ export default class LSystem {
         let mapRotZ1: Map<string, number> = new Map();
         mapRotZ1.set(this.rotatePosZ.bind(this), 1.0);
         this.drawRotPosZ= new DrawingRule("e", mapRotZ1);
-        this.drawRules.set("c", this.drawRotPosZ);
+        this.drawRules.set("e", this.drawRotPosZ);
 
         let mapRotZ2: Map<string, number> = new Map();
         mapRotZ2.set(this.rotateNegZ.bind(this), 1.0);

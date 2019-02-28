@@ -17,7 +17,6 @@ const controls = {
   iterations: 1
 };
 
-let square: Square;
 let screenQuad: ScreenQuad;
 let time: number = 0.0;
 let tubeFile: string = readTextFile('./src/tube.obj');
@@ -35,15 +34,14 @@ function loadScene(iterations: number) {
 
   // LSystem initialization
   let lsystem: LSystem = new LSystem("A", iterations);
+  lsystem.expandGrammar();
   let transforms: mat4[] = lsystem.transforms;
-
-  lsystem.setDrawRules();
   lsystem.draw();
 
-  let col1 = [];
-  let col2 = [];
-  let col3 = [];
-  let col4 = [];
+  let col1Arr = [];
+  let col2Arr = [];
+  let col3Arr = [];
+  let col4Arr = [];
   let colorsArr = [];
   let n: number = transforms.length;
   console.log(n);
@@ -51,38 +49,38 @@ function loadScene(iterations: number) {
   for (let i = 0; i < n; i++) {
     let transform: mat4 = transforms[i];
 
-    col1.push(transform[0]);
-    col1.push(transform[1]);
-    col1.push(transform[2]);
-    col1.push(transform[3]);
+    col1Arr.push(transform[0]);
+    col1Arr.push(transform[1]);
+    col1Arr.push(transform[2]);
+    col1Arr.push(transform[3]);
 
-    col2.push(transform[4]);
-    col2.push(transform[5]);
-    col2.push(transform[6]);
-    col2.push(transform[7]);
+    col2Arr.push(transform[4]);
+    col2Arr.push(transform[5]);
+    col2Arr.push(transform[6]);
+    col2Arr.push(transform[7]);
 
-    col3.push(transform[8]);
-    col3.push(transform[9]);
-    col3.push(transform[10]);
-    col3.push(transform[11]);
+    col3Arr.push(transform[8]);
+    col3Arr.push(transform[9]);
+    col3Arr.push(transform[10]);
+    col3Arr.push(transform[11]);
 
-    col4.push(transform[12]);
-    col4.push(transform[13]);
-    col4.push(transform[14]);
-    col4.push(transform[15]);
+    col4Arr.push(transform[12]);
+    col4Arr.push(transform[13]);
+    col4Arr.push(transform[14]);
+    col4Arr.push(transform[15]);
 
     colorsArr.push(23.0/255.0);
     colorsArr.push(150.0/255.0);
     colorsArr.push(19.0/255.0);
-    colorsArr.push(0.1);
+    colorsArr.push(1.0);
 
   }
 
-  console.log(col1);
-  let colOne: Float32Array = new Float32Array(col1);
-  let colTwo: Float32Array = new Float32Array(col2);
-  let colThree: Float32Array = new Float32Array(col3);
-  let colFour: Float32Array = new Float32Array(col4);
+  console.log(col1Arr);
+  let colOne: Float32Array = new Float32Array(col1Arr);
+  let colTwo: Float32Array = new Float32Array(col2Arr);
+  let colThree: Float32Array = new Float32Array(col3Arr);
+  let colFour: Float32Array = new Float32Array(col4Arr);
   let colors: Float32Array = new Float32Array(colorsArr);
   tube.setInstanceVBOs(colOne, colTwo, colThree, colFour, colors);
   tube.setNumInstances(n);
