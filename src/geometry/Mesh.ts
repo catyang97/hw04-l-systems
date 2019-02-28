@@ -13,6 +13,11 @@ class Mesh extends Drawable {
 
   objString: string;
 
+  col1: Float32Array;
+  col2: Float32Array;
+  col3: Float32Array;
+  col4: Float32Array;
+
   constructor(objString: string, center: vec3) {
     super(); // Call the constructor of the super class. This is required.
     this.center = vec4.fromValues(center[0], center[1], center[2], 1);
@@ -43,10 +48,10 @@ class Mesh extends Drawable {
     idxTemp = loadedMesh.indices;
 
     // white vert color for now
-    this.colors = new Float32Array(posTemp.length);
-    for (var i = 0; i < posTemp.length; ++i){
-      this.colors[i] = 1.0;
-    }
+    // this.colors = new Float32Array(posTemp.length);
+    // for (var i = 0; i < posTemp.length; ++i){
+    //   this.colors[i] = 1.0;
+    // }
 
     this.indices = new Uint32Array(idxTemp);
     this.normals = new Float32Array(norTemp);
@@ -58,6 +63,10 @@ class Mesh extends Drawable {
     this.generateNor();
     this.generateUV();
     this.generateCol();
+    this.generateTransform1();
+    this.generateTransform2();
+    this.generateTransform3();
+    this.generateTransform4();
 
     this.count = this.indices.length;
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.bufIdx);
@@ -78,6 +87,28 @@ class Mesh extends Drawable {
     console.log(`Created Mesh from OBJ`);
     this.objString = ""; // hacky clear
   }
+
+  setInstanceVBOs(col1: Float32Array, col2: Float32Array, col3: Float32Array, col4: Float32Array, colors: Float32Array) {
+    this.col1 = col1;
+    this.col2 = col2;
+    this.col3 = col3;
+    this.col4 = col4;
+    this.colors = colors;
+    console.log(this.col1);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.bufCol);
+    gl.bufferData(gl.ARRAY_BUFFER, this.colors, gl.STATIC_DRAW);
+    
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.bufTransform1);
+    gl.bufferData(gl.ARRAY_BUFFER, this.col1, gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.bufTransform2);
+    gl.bufferData(gl.ARRAY_BUFFER, this.col2, gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.bufTransform3);
+    gl.bufferData(gl.ARRAY_BUFFER, this.col3, gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.bufTransform4);
+    gl.bufferData(gl.ARRAY_BUFFER, this.col4, gl.STATIC_DRAW);
+
+    }
 };
 
 export default Mesh;

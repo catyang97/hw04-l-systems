@@ -1,4 +1,4 @@
-import {vec3} from 'gl-matrix';
+import {vec3, mat4} from 'gl-matrix';
 import * as Stats from 'stats-js';
 import * as DAT from 'dat-gui';
 import Square from './geometry/Square';
@@ -7,46 +7,85 @@ import OpenGLRenderer from './rendering/gl/OpenGLRenderer';
 import Camera from './Camera';
 import {setGL} from './globals';
 import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
+import {readTextFile} from './globals';
+import Mesh from './geometry/Mesh';
+import LSystem from './LSystem';
 
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
 const controls = {
+  iterations: 1
 };
 
 let square: Square;
 let screenQuad: ScreenQuad;
 let time: number = 0.0;
+let tubeFile: string = readTextFile('./src/tube.obj');
+let tube: Mesh;
+let iterations: number = 0;
 
-function loadScene() {
-  square = new Square();
-  square.create();
+function loadScene(iterations: number) {
+  tube = new Mesh(tubeFile, vec3.fromValues(0, 0, 0));
+  tube.create();
+
+  // square = new Square();
+  // square.create();
   screenQuad = new ScreenQuad();
   screenQuad.create();
 
-  // Set up instanced rendering data arrays here.
-  // This example creates a set of positional
-  // offsets and gradiated colors for a 100x100 grid
-  // of squares, even though the VBO data for just
-  // one square is actually passed to the GPU
-  let offsetsArray = [];
-  let colorsArray = [];
-  let n: number = 100.0;
-  for(let i = 0; i < n; i++) {
-    for(let j = 0; j < n; j++) {
-      offsetsArray.push(i);
-      offsetsArray.push(j);
-      offsetsArray.push(0);
+  // LSystem initialization
+  let lsystem: LSystem = new LSystem("A", iterations);
+  let transforms: mat4[] = lsystem.transforms;
 
-      colorsArray.push(i / n);
-      colorsArray.push(j / n);
-      colorsArray.push(1.0);
-      colorsArray.push(1.0); // Alpha channel
-    }
+  lsystem.setDrawRules();
+  lsystem.draw();
+
+  let col1 = [];
+  let col2 = [];
+  let col3 = [];
+  let col4 = [];
+  let colorsArr = [];
+  let n: number = transforms.length;
+  console.log(n);
+
+  for (let i = 0; i < n; i++) {
+    let transform: mat4 = transforms[i];
+
+    col1.push(transform[0]);
+    col1.push(transform[1]);
+    col1.push(transform[2]);
+    col1.push(transform[3]);
+
+    col2.push(transform[4]);
+    col2.push(transform[5]);
+    col2.push(transform[6]);
+    col2.push(transform[7]);
+
+    col3.push(transform[8]);
+    col3.push(transform[9]);
+    col3.push(transform[10]);
+    col3.push(transform[11]);
+
+    col4.push(transform[12]);
+    col4.push(transform[13]);
+    col4.push(transform[14]);
+    col4.push(transform[15]);
+
+    colorsArr.push(23.0/255.0);
+    colorsArr.push(150.0/255.0);
+    colorsArr.push(19.0/255.0);
+    colorsArr.push(0.1);
+
   }
-  let offsets: Float32Array = new Float32Array(offsetsArray);
-  let colors: Float32Array = new Float32Array(colorsArray);
-  square.setInstanceVBOs(offsets, colors);
-  square.setNumInstances(n * n); // grid of "particles"
+
+  console.log(col1);
+  let colOne: Float32Array = new Float32Array(col1);
+  let colTwo: Float32Array = new Float32Array(col2);
+  let colThree: Float32Array = new Float32Array(col3);
+  let colFour: Float32Array = new Float32Array(col4);
+  let colors: Float32Array = new Float32Array(colorsArr);
+  tube.setInstanceVBOs(colOne, colTwo, colThree, colFour, colors);
+  tube.setNumInstances(n);
 }
 
 function main() {
@@ -60,6 +99,7 @@ function main() {
 
   // Add controls to the gui
   const gui = new DAT.GUI();
+  gui.add(controls, 'iterations', 0, 6).step(1);
 
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement> document.getElementById('canvas');
@@ -72,14 +112,12 @@ function main() {
   setGL(gl);
 
   // Initial call to load scene
-  loadScene();
+  loadScene(iterations);
 
-  const camera = new Camera(vec3.fromValues(50, 50, 10), vec3.fromValues(50, 50, 0));
-
+  const camera = new Camera(vec3.fromValues(10, 10, 10), vec3.fromValues(0, 0, 0));
   const renderer = new OpenGLRenderer(canvas);
   renderer.setClearColor(0.2, 0.2, 0.2, 1);
-  gl.enable(gl.BLEND);
-  gl.blendFunc(gl.ONE, gl.ONE); // Additive blending
+  gl.enable(gl.DEPTH_TEST);
 
   const instancedShader = new ShaderProgram([
     new Shader(gl.VERTEX_SHADER, require('./shaders/instanced-vert.glsl')),
@@ -98,10 +136,16 @@ function main() {
     instancedShader.setTime(time);
     flat.setTime(time++);
     gl.viewport(0, 0, window.innerWidth, window.innerHeight);
+
+    if (controls.iterations != iterations) {
+      iterations = controls.iterations;
+      loadScene(iterations);
+    }
+    
     renderer.clear();
     renderer.render(camera, flat, [screenQuad]);
     renderer.render(camera, instancedShader, [
-      square,
+      tube,
     ]);
     stats.end();
 
