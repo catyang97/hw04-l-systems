@@ -7,6 +7,7 @@
 ![](onefish.png)
 
 ## Coral Reef- 3 Iterations
+(Zoom out to see)
 ![](threecoral.png)
 
 ---
@@ -23,7 +24,6 @@ Fan Coral Reefs
 
 ---
 ## Implementation
-
 - LSystem Class: The LSystem class keep track of the current turtle, the turtle history, map of expansion rules, map of drawing rules, and the stack of transformation matrices for the turtles and the fish. In each iteration, the grammar is expanded in the L-System, and this class draws the grammar using the written drawing rules.
 - Turtle Class: The Turtle keeps track of its orientation and position. The orientation is represented with a quat and a global up vector. The position is adjusted by moving along the direction/orientation of the turtle. This class also outputs the turtle's transformation in the form of a matrix, as well as a fish's transformation.
 - ExpansionRule Class: Each ExpansionRule holds the string that we are expanding and a map of possible expanded strings along with their probability of being chosen.
