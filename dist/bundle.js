@@ -16786,10 +16786,7 @@ class LSystem {
     }
     setExpansionRules() {
         let expansions = new Map();
-        // expansions.set("A[aAbB][cAB]A", 0.5);
-        // expansions.set("Be[[A]fA]fB[fBA]eA", 1.0);
         expansions.set("Ae[eAB[fbA]A]f[aA[bA]bA]", 0.7);
-        // expansions.set("AAe[eAAfA]f[bAbAbA]", 0.5);
         expansions.set("Af[fA[aA]bA]A[eA]", 0.3);
         this.expRules.set("A", new __WEBPACK_IMPORTED_MODULE_2__ExpansionRule__["a" /* default */]("A", expansions));
         let expansions2 = new Map();
