@@ -40,7 +40,6 @@ export default class LSystem {
         let expansions: Map<string, number> = new Map();
         expansions.set("Ae[eAB[fbA]A]f[aA[bA]bA]", 0.7);
         expansions.set("Af[fA[aA]bA]A[eA]", 0.3);
-
         this.expRules.set("A", new ExpansionRule("A", expansions));
 
         let expansions2: Map<string, number> = new Map();
