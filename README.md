@@ -11,7 +11,7 @@
 
 ---
 ## References
-- Spongebob Anouncer Fish Model: https://www.models-resource.com/gamecube/spongebobsquarepantslightscamerapants/model/6096/
+- Spongebob Announcer Fish Model: https://www.models-resource.com/gamecube/spongebobsquarepantslightscamerapants/model/6096/
 - Vecs, Mats, Quat Functions: http://glmatrix.net/docs/index.html
 - CIS 566 Slides: https://cis700-procedural-graphics.github.io/files/lsystems_1_31_17.pdf
 - Quat and rotation information: CIS 562 Material
@@ -29,3 +29,4 @@ Fan Coral Reefs
 - ExpansionRule Class: Each ExpansionRule holds the string that we are expanding and a map of possible expanded strings along with their probability of being chosen.
 - DrawingRule Class: Each DrawingRule holds the string that we are drawing and a map of possible functions that might be called for each rule along with their probability of being chosen.
 - Background: I used a noise function to color the ocean.
+- Instance Rendering: A collection of transformation and color data is passsed to the GPU to draw the L-System objects using instanced rendering.
