@@ -8,13 +8,13 @@ export default class Turtle {
     position : vec3;
     orientation : quat;
     depth : number;
-    globalUp: vec3;
+    globalUp: vec4;
 
     constructor(pos: vec3, orient: quat, iter: number) {
         this.position = pos;
         this.orientation = orient;
         this.depth = iter;
-        this.globalUp = vec3.fromValues(0, 1, 0);
+        this.globalUp = vec4.fromValues(0, 1, 0, 1);
     }
 
     moveForward(distance: number) {
@@ -22,8 +22,7 @@ export default class Turtle {
         // Find rotation matrix from the orientation quat
         let rot: mat4 = mat4.create();
         mat4.fromQuat(rot, this.orientation);
-        let up: vec4 = vec4.fromValues(this.globalUp[0], this.globalUp[1], this.globalUp[2], 1.0);
-        vec4.transformMat4(forward, up, rot);
+        vec4.transformMat4(forward, this.globalUp, rot);
         let move: vec3 = vec3.fromValues(forward[0] * distance, forward[1] * distance, forward[2] * distance);
         vec3.add(this.position, this.position, move);
         console.log("MOVING");
