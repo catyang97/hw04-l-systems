@@ -5,7 +5,6 @@
 import {vec3, quat, mat4, glMatrix, vec4} from 'gl-matrix';
 
 export default class Turtle {
-
     position : vec3;
     orientation : quat;
     depth : number;
@@ -39,11 +38,11 @@ export default class Turtle {
     }
     
     getTransformMatrix() : mat4 {
-        let translate: mat4 = mat4.create();
-        mat4.fromTranslation(translate, this.position);
-        
         let rotate: mat4 = mat4.create();
         mat4.fromQuat(rotate, this.orientation);
+
+        let translate: mat4 = mat4.create();
+        mat4.fromTranslation(translate, this.position);
 
         let scale: mat4 = mat4.create();
         mat4.fromScaling(scale, vec3.fromValues(0.5, 0.9, 0.5));
