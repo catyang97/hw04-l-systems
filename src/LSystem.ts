@@ -4,13 +4,14 @@ import ExpansionRule from './ExpansionRule';
 import DrawingRule from './DrawingRule';
 
 export default class LSystem {
-    turtle: Turtle = new Turtle(vec3.fromValues(0.0, 0.0, 0.0), quat.create());
+    turtle: Turtle;
     turtleStack: Turtle[];
     grammar: string;
     iterations: number;
     expRules: Map<string, ExpansionRule> = new Map();
     drawRules: Map<string, DrawingRule> = new Map();
     transforms: mat4[] = [];
+    fishTransforms: mat4[] = [];
 
     drawForward : DrawingRule;
     drawSave : DrawingRule;
@@ -25,6 +26,7 @@ export default class LSystem {
     drawB : DrawingRule;
 
     constructor(axiom: string, iterations: number) {
+        this.turtle = new Turtle(vec3.fromValues(0.0, -4.0, 0.0), quat.create(), iterations);
         this.grammar = axiom;
         this.turtleStack = [];
         this.setExpansionRules();
@@ -37,15 +39,15 @@ export default class LSystem {
     setExpansionRules() {
         let expansions: Map<string, number> = new Map();
         // expansions.set("A[aAbB][cAB]A", 0.5);
-        // expansions.set("A[cAdAeA]A", 0.5);
         // expansions.set("Be[[A]fA]fB[fBA]eA", 1.0);
-        expansions.set("AAe[eAfAfA]f[aAbAbA]", 1.0);
+        expansions.set("Ae[eAB[fbA]A]f[aA[bA]bA]", 0.7);
+        // expansions.set("AAe[eAAfA]f[bAbAbA]", 0.5);
+        expansions.set("Af[fA[aA]bA]A[eA]", 0.3);
 
-        // expansions.set("A[eA]B", 0.5);
         this.expRules.set("A", new ExpansionRule("A", expansions));
 
         let expansions2: Map<string, number> = new Map();
-        expansions2.set("BB", 1.0);
+        expansions2.set("A", 1.0);
         this.expRules.set("B", new ExpansionRule("B", expansions2));
 
         let expansionsSave: Map<string, number> = new Map();
@@ -97,11 +99,8 @@ export default class LSystem {
     }
 
     line() {
-        // console.log("hi");
-        console.log(this.turtle);
-        // console.log(this.grammar);
         this.transforms.push(this.turtle.getTransformMatrix());
-        this.turtle.moveForward(4.0);
+        this.turtle.moveForward(1.5);
     }
 
     save() {
@@ -109,7 +108,7 @@ export default class LSystem {
         let orient: quat = quat.create();
         vec3.copy(pos, this.turtle.position);
         quat.copy(orient, this.turtle.orientation);
-        let newTurt: Turtle = new Turtle(pos, orient);
+        let newTurt: Turtle = new Turtle(pos, orient, this.iterations);
         this.turtleStack.push(newTurt);
         // this.turtleStack.push(this.turtle);
     }
@@ -122,29 +121,33 @@ export default class LSystem {
     }
 
     rotatePosX() {
-        // this.turtle.rightRotate(25.0);
-        this.turtle.rotate(25, 0, 0);
+        this.turtle.rotate(20, 0, 0);
+        this.turtle.moveForward(1.0);
     }
 
     rotateNegX() {
-        this.turtle.rotate(-25, 0, 0);
+        this.turtle.rotate(-20, 0, 0);
+        this.turtle.moveForward(1.0);
     }
 
     rotatePosY() {
-        console.log("rotate y");
-        this.turtle.rotate(0.0, 25.0, 0.0);
+        this.turtle.rotate(0, 20, 0);
+        this.turtle.moveForward(1.0);
     }
 
     rotateNegY() {
-        this.turtle.rotate(0, -25, 0);
+        this.turtle.rotate(0, -20, 0);
+        this.turtle.moveForward(1.0);
     }
 
     rotatePosZ() {
-        this.turtle.rotate(0, 0, 25);
+        this.turtle.rotate(0, 0, 20);
+        this.turtle.moveForward(1.0);
     }
 
     rotateNegZ() {
-        this.turtle.rotate(0, 0, -25);
+        this.turtle.rotate(0, 0, -20);
+        this.turtle.moveForward(1.0);
     }
 
     end() {
@@ -152,7 +155,6 @@ export default class LSystem {
     }
 
     blankB() {
-        console.log("blank");
     }
 
     setDrawRules() {
@@ -221,16 +223,16 @@ export default class LSystem {
     }
 
     draw() {
-        console.log(this.grammar);
-
         for (let i = 0; i < this.grammar.length; i++) {
             let curr = this.grammar.charAt(i);
-            console.log(curr);
             let rule = this.drawRules.get(curr).getDraw();
             if (rule) {
                 rule();
             }
-
+            let rand: number = Math.random();
+            if (rand < 0.08) {
+                this.fishTransforms.push(this.turtle.getFishTransformMatrix());
+            }
         }
     }
 }
