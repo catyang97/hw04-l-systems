@@ -76,7 +76,6 @@ function loadScene(iterations: number) {
 
   }
 
-  console.log(col1Arr);
   let colOne: Float32Array = new Float32Array(col1Arr);
   let colTwo: Float32Array = new Float32Array(col2Arr);
   let colThree: Float32Array = new Float32Array(col3Arr);

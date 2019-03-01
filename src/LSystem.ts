@@ -4,7 +4,7 @@ import ExpansionRule from './ExpansionRule';
 import DrawingRule from './DrawingRule';
 
 export default class LSystem {
-    turtle: Turtle = new Turtle(vec3.fromValues(0.0, 0.0, 0.0), vec4.fromValues(0.0, 1.0, 0.0, 0.0), vec4.fromValues(1.0, 0.0, 0.0, 0.0), vec4.fromValues(0.0, 0.0, 1.0, 0.0));
+    turtle: Turtle = new Turtle(vec3.fromValues(0.0, 0.0, 0.0), quat.create());
     turtleStack: Turtle[];
     grammar: string;
     iterations: number;
@@ -38,11 +38,14 @@ export default class LSystem {
         let expansions: Map<string, number> = new Map();
         // expansions.set("A[aAbB][cAB]A", 0.5);
         // expansions.set("A[cAdAeA]A", 0.5);
-        expansions.set("A[Aa]", 1.0);
+        // expansions.set("Be[[A]fA]fB[fBA]eA", 1.0);
+        expansions.set("AAe[eAfAfA]f[aAbAbA]", 1.0);
+
+        // expansions.set("A[eA]B", 0.5);
         this.expRules.set("A", new ExpansionRule("A", expansions));
 
         let expansions2: Map<string, number> = new Map();
-        expansions2.set("A", 1.0);
+        expansions2.set("BB", 1.0);
         this.expRules.set("B", new ExpansionRule("B", expansions2));
 
         let expansionsSave: Map<string, number> = new Map();
@@ -98,39 +101,50 @@ export default class LSystem {
         console.log(this.turtle);
         // console.log(this.grammar);
         this.transforms.push(this.turtle.getTransformMatrix());
-        this.turtle.moveForward(1.0);
+        this.turtle.moveForward(4.0);
     }
 
     save() {
-        this.turtleStack.push(this.turtle);
+        let pos: vec3 = vec3.create();
+        let orient: quat = quat.create();
+        vec3.copy(pos, this.turtle.position);
+        quat.copy(orient, this.turtle.orientation);
+        let newTurt: Turtle = new Turtle(pos, orient);
+        this.turtleStack.push(newTurt);
+        // this.turtleStack.push(this.turtle);
     }
 
     reset() {
-        this.turtle = this.turtleStack.pop();
+        var turt: Turtle = this.turtleStack.pop();
+        this.turtle.position = turt.position;
+        this.turtle.orientation = turt.orientation;
+        // this.turtle = this.turtleStack.pop();
     }
 
     rotatePosX() {
-        this.turtle.rightRotate(25.0);
+        // this.turtle.rightRotate(25.0);
+        this.turtle.rotate(25, 0, 0);
     }
 
     rotateNegX() {
-        this.turtle.rightRotate(-25.0);
+        this.turtle.rotate(-25, 0, 0);
     }
 
     rotatePosY() {
-        this.turtle.forwardRotate(25.0);
+        console.log("rotate y");
+        this.turtle.rotate(0.0, 25.0, 0.0);
     }
 
     rotateNegY() {
-        this.turtle.forwardRotate(-25.0);
+        this.turtle.rotate(0, -25, 0);
     }
 
     rotatePosZ() {
-        this.turtle.upRotate(25.0);
+        this.turtle.rotate(0, 0, 25);
     }
 
     rotateNegZ() {
-        this.turtle.upRotate(-25.0);
+        this.turtle.rotate(0, 0, -25);
     }
 
     end() {
