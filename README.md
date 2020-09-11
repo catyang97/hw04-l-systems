@@ -1,7 +1,7 @@
 # Homework 4: L-systems
 ## Catherine Yang, PennKey: catyang
 
-## https://catyang97.github.io/hw04-l-systems/
+## https://catyang97.github.io/l-systems/
 
 ## Coral Reef- 1 Iteration + Fish Closeup
 ![](onefish.png)
